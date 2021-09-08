@@ -15,7 +15,7 @@ contract NFTMinter is ERC721Enumerable, Ownable {
   uint256 public maxMintAmount = 100;
   bool public paused = false;
   mapping(address => bool) public whitelisted;
-  string public nftName = "HoneyFarmTest1";
+  string public nftName = "HoneyFarmTest3";
   string public nftUnit = "Bee";
   string public uri = "http://18.117.95.188/api/honey/";
 
@@ -45,7 +45,7 @@ contract NFTMinter is ERC721Enumerable, Ownable {
       }
     }
 
-    for (uint256 i = 1; i <= _mintAmount; i++) {
+    for (uint256 i = 0; i < _mintAmount; i++) {
       _safeMint(_to, supply + i);
     }
   }
