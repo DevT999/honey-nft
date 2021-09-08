@@ -7,9 +7,38 @@ const { createAlchemyWeb3 } = require("@alch/alchemy-web3")
 const web3 = createAlchemyWeb3(API_URL)
 
 const contract = require("../artifacts/contracts/NFTMinter.sol/NFTMinter.json")
-const contractAddress = "0x3B07073DD5518b353b0aA3b9a130C152921af122"
+const contractAddress = "0xCa3a3c0f18b53b06D95E22121Be5cfe1981Da159"
 const nftContract = new web3.eth.Contract(contract.abi, contractAddress)
 
+const subProcess = async (tx) => {
+  return new Promise((resolve, reject)=>{
+    web3.eth.accounts.signTransaction(tx, PRIVATE_KEY).then((signedTx) => {
+      web3.eth.sendSignedTransaction(
+        signedTx.rawTransaction,
+        function (err, hash) {
+          if (!err) {
+            console.log(
+              "The hash of your transaction is: ",
+              hash,
+              "\nCheck Alchemy's Mempool to view the status of your transaction!"
+            )
+            resolve(true)
+          } else {
+            console.log(
+              "Something went wrong when submitting your transaction:",
+              err
+            )
+            reject(err)
+          }
+        }
+      )
+    })
+    .catch((err) => {
+      console.log(" Promise failed:", err)
+      reject(err)
+    })
+  })
+}
 async function mintNFT(amount) {
   const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); //get latest nonce
 
@@ -21,30 +50,10 @@ async function mintNFT(amount) {
       'gas': 500000,
       'data': nftContract.methods.mint(PUBLIC_KEY, amount).encodeABI()
   };
-  const signPromise = web3.eth.accounts.signTransaction(tx, PRIVATE_KEY)
-  signPromise
-  .then((signedTx) => {
-    web3.eth.sendSignedTransaction(
-      signedTx.rawTransaction,
-      function (err, hash) {
-        if (!err) {
-          console.log(
-            "The hash of your transaction is: ",
-            hash,
-            "\nCheck Alchemy's Mempool to view the status of your transaction!"
-          )
-        } else {
-          console.log(
-            "Something went wrong when submitting your transaction:",
-            err
-          )
-        }
-      }
-    )
-  })
-  .catch((err) => {
-    console.log(" Promise failed:", err)
-  })
+  await subProcess(tx);
+  return 1
 }
 
-mintNFT(10)
+for(let i=0; i<5; i++) {
+  setTimeout(() => mintNFT(2), i*20000);
+}
