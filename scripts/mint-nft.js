@@ -43,8 +43,9 @@ const nftContract = new web3.eth.Contract(contract.abi, contractAddress)
 async function mintNFT(amount) {
   const account = web3.eth.accounts.privateKeyToAccount(`0x${PRIVATE_KEY}`);
   web3.eth.accounts.wallet.add(account);
+  const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest');
   web3.eth.defaultAccount = account.address;
-  nftContract.methods.mint(PUBLIC_KEY, amount).send({from: PUBLIC_KEY, value: 0, gas: 5000000}).on('receipt', function(receipt){
+  nftContract.methods.mint(PUBLIC_KEY, amount).send({from: PUBLIC_KEY, value: 0, gas: 6000000, nonce: nonce}).on('receipt', function(receipt){
     console.log('success');
   });
   //const nonce = await web3.eth.getTransactionCount(PUBLIC_KEY, 'latest'); //get latest nonce
