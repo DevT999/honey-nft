@@ -15,7 +15,7 @@ contract NFTMinter is ERC721Enumerable, Ownable {
   uint256 public maxMintAmount = 100;
   bool public paused = false;
   mapping(address => bool) public whitelisted;
-  string public nftName = "HoneyFarm_TEST";
+  string public nftName = "HoneyFarm_New";
   string public nftUnit = "Bee";
   string public uri = "http://18.117.95.188/api/honey/";
 
